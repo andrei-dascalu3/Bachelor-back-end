@@ -26,6 +26,9 @@ public class User {
 	@Column(name = "email")
 	private String email;
 
+	@Column(name = "type")
+	private String type;
+	
 	// define constructors
 	public User() {
 
@@ -68,5 +71,13 @@ public class User {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public String getType() {
+		return type;
+	}
+	
+	public void setType(String type) {
+		this.type = type;
 	}
 }
