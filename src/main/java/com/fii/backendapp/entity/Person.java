@@ -8,8 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "persons")
+public class Person {
 	
 	// define fields
 	@Id
@@ -30,11 +30,11 @@ public class User {
 	private String type;
 	
 	// define constructors
-	public User() {
+	public Person() {
 
 	}
 
-	public User(String firstName, String lastName, String email) {
+	public Person(String firstName, String lastName, String email) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
