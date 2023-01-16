@@ -28,38 +28,45 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@CrossOrigin( origins = "http://localhost:4200")
 public class UserController {
 
     private final UserService userService;
 
+    @CrossOrigin( origins = "http://localhost:4200")
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers() {
         return ResponseEntity.ok().body(userService.getUsers());
     }
 
+    @CrossOrigin( origins = "http://localhost:4200")
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUser(@PathVariable("id") Long userId) {
         return ResponseEntity.ok().body(userService.getUser(userId));
     }
 
+    @CrossOrigin( origins = "http://localhost:4200")
     @PostMapping("/user/save")
     public ResponseEntity<User> saveUser(@RequestBody User user) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
         return ResponseEntity.created(uri).body(userService.saveUser(user));
     }
 
+    @CrossOrigin( origins = "http://localhost:4200")
     @PostMapping("/role/save")
     public ResponseEntity<Role> saveRole(@RequestBody Role role) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
         return ResponseEntity.created(uri).body(userService.saveRole(role));
     }
 
+    @CrossOrigin( origins = "http://localhost:4200")
     @PostMapping("/role/addToUser")
     public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form) {
         userService.addRoleToUser(form.getUsername(), form.getRoleName());
         return ResponseEntity.ok().build();
     }
 
+    @CrossOrigin( origins = "http://localhost:4200")
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);

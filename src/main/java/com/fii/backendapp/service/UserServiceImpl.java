@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.fii.backendapp.util.CustomUser;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -44,18 +45,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             log.error("User not found in the database");
             throw new UsernameNotFoundException("User not found in the database");
         } else {
-            log.info("User {} found int the database", username);
+            log.info("User {} found in the database", username);
         }
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         user.getRoles().forEach(role -> {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
         });
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
+        return new CustomUser(user.getUsername(), user.getPassword(), authorities, user.getId(), user.isProfessor());
     }
 
     @Override
     public User saveUser(User user) {
         log.info("Saving new user to the database");
+        log.info(user.toString());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }
