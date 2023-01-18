@@ -5,9 +5,10 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fii.backendapp.domain.Role;
-import com.fii.backendapp.domain.User;
-import com.fii.backendapp.service.UserService;
+import com.fii.backendapp.domain.proposal.Proposal;
+import com.fii.backendapp.domain.user.Role;
+import com.fii.backendapp.domain.user.User;
+import com.fii.backendapp.service.user.UserService;
 import com.fii.backendapp.util.RoleToUserForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,45 +29,50 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-@CrossOrigin( origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
 
     private final UserService userService;
 
-    @CrossOrigin( origins = "http://localhost:4200")
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers() {
         return ResponseEntity.ok().body(userService.getUsers());
     }
 
-    @CrossOrigin( origins = "http://localhost:4200")
+    @GetMapping("/professors")
+    public ResponseEntity<List<User>> getProfessor() {return ResponseEntity.ok().body(userService.getProfessors());}
+
+    @GetMapping("/students")
+    public ResponseEntity<List<User>> getStudents() {return ResponseEntity.ok().body(userService.getStudents());}
+
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUser(@PathVariable("id") Long userId) {
         return ResponseEntity.ok().body(userService.getUser(userId));
     }
 
-    @CrossOrigin( origins = "http://localhost:4200")
+    @GetMapping("/users/{id}/proposals")
+    public ResponseEntity<Proposal> getProposals(@PathVariable(id) Long userId) {
+        return ResponseEntity.ok().body(prop)
+    }
+
     @PostMapping("/user/save")
     public ResponseEntity<User> saveUser(@RequestBody User user) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
         return ResponseEntity.created(uri).body(userService.saveUser(user));
     }
 
-    @CrossOrigin( origins = "http://localhost:4200")
     @PostMapping("/role/save")
     public ResponseEntity<Role> saveRole(@RequestBody Role role) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
         return ResponseEntity.created(uri).body(userService.saveRole(role));
     }
 
-    @CrossOrigin( origins = "http://localhost:4200")
     @PostMapping("/role/addToUser")
     public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form) {
         userService.addRoleToUser(form.getUsername(), form.getRoleName());
         return ResponseEntity.ok().build();
     }
 
-    @CrossOrigin( origins = "http://localhost:4200")
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);

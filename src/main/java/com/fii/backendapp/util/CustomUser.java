@@ -1,6 +1,5 @@
 package com.fii.backendapp.util;
 
-import com.fii.backendapp.domain.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 

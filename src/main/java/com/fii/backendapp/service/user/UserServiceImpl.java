@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.fii.backendapp.service;
+package com.fii.backendapp.service.user;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,8 +15,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.fii.backendapp.domain.Role;
-import com.fii.backendapp.domain.User;
+import com.fii.backendapp.domain.user.Role;
+import com.fii.backendapp.domain.user.User;
 import com.fii.backendapp.repository.RoleRepository;
 import com.fii.backendapp.repository.UserRepository;
 
@@ -93,5 +93,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepo.findAll();
     }
 
+    @Override
+    public List<User> getStudents() {
+        log.info("Fetching all students");
+        return userRepo.findByIsProfessor(false);
+    }
 
+    @Override
+    public List<User> getProfessors() {
+        log.info("Fetching all professors");
+        return userRepo.findByIsProfessor(true);
+    }
 }
