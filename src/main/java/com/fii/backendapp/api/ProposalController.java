@@ -4,13 +4,13 @@ import com.fii.backendapp.domain.proposal.Proposal;
 import com.fii.backendapp.domain.user.User;
 import com.fii.backendapp.service.proposal.ProposalService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.Set;
+import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -21,7 +21,14 @@ public class ProposalController {
     private final ProposalService proposalService;
 
     @GetMapping("/proposals")
-    public ResponseEntity<Set<Proposal>> getAllProposals() {
+    public ResponseEntity<List<Proposal>> getAllProposals() {
         return ResponseEntity.ok().body(proposalService.getAllProposals());
+    }
+
+    @PostMapping("/proposal/save")
+    public ResponseEntity<Proposal> saveProposal(@RequestBody Proposal proposal) {
+        URI uri =
+                URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/proposal/save").toUriString());
+        return ResponseEntity.created(uri).body(proposalService.saveProposal(proposal));
     }
 }

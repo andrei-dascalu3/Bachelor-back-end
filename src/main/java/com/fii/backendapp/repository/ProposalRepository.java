@@ -1,10 +1,10 @@
 package com.fii.backendapp.repository;
 
 import com.fii.backendapp.domain.proposal.Proposal;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Set;
+import java.util.List;
 
-public interface ProposalRepository {
-    Proposal findById(Long id);
-    Set<Proposal> findByProfId(Long profId);
+public interface ProposalRepository extends JpaRepository<Proposal, Long> {
+    List<Proposal> findByProfId(Long profId);
 }

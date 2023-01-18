@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fii.backendapp.domain.proposal.Proposal;
 import com.fii.backendapp.domain.user.Role;
 import com.fii.backendapp.domain.user.User;
+import com.fii.backendapp.service.proposal.ProposalService;
 import com.fii.backendapp.service.user.UserService;
 import com.fii.backendapp.util.RoleToUserForm;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class UserController {
 
     private final UserService userService;
+    private final ProposalService proposalService;
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers() {
@@ -51,8 +53,8 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}/proposals")
-    public ResponseEntity<Proposal> getProposals(@PathVariable(id) Long userId) {
-        return ResponseEntity.ok().body(prop)
+    public ResponseEntity<List<Proposal>> getAllProposalsOfUser(@PathVariable("id") Long uid) {
+        return ResponseEntity.ok().body(proposalService.getProposalsOfUser(uid));
     }
 
     @PostMapping("/user/save")

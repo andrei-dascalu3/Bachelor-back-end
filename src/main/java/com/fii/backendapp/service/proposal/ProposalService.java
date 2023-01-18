@@ -2,11 +2,11 @@ package com.fii.backendapp.service.proposal;
 
 import com.fii.backendapp.domain.proposal.Proposal;
 
-import java.util.Set;
+import java.util.List;
 
 public interface ProposalService {
     Proposal saveProposal(Proposal proposal);
     Proposal getProposal(Long id);
-    Set<Proposal> getAllProposals();
-    Set<Proposal> getProposalsOfUser(Long uid);
+    List<Proposal> getAllProposals();
+    List<Proposal> getProposalsOfUser(Long uid);
 }
