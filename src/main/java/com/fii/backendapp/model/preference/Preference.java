@@ -14,7 +14,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Preference {
     @EmbeddedId
-    private PreferenceKey id;
+    private PreferenceKey id = new PreferenceKey();
     @ManyToOne
     @MapsId("studentId")
     @JoinColumn(name = "stud_id")

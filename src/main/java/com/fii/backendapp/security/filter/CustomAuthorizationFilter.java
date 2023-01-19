@@ -40,7 +40,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             String authorizationHeader = request.getHeader(AUTHORIZATION);
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 try {
-                    String token = authorizationHeader.substring("Bearer ".length());
+                    String token = authorizationHeader.substring("Bearer " .length());
                     Algorithm algorithm = Algorithm.HMAC256(SECRET.getBytes());
                     JWTVerifier verifier = JWT.require(algorithm).build();
                     DecodedJWT decodedJWT = verifier.verify(token);
@@ -53,6 +53,17 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(username, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    boolean isProfessor = decodedJWT.getClaim("isProfessor").asBoolean();
+                    if (!request.getMethod().equalsIgnoreCase("GET") &&
+                        request.getServletPath().equals("/api/user/{id}/proposal**") &&
+                        !isProfessor) {
+                        throw new IllegalAccessError("Students cannot modify proposals");
+                    }
+                    if (!request.getMethod().equalsIgnoreCase("GET") &&
+                            request.getServletPath().equals("/api/user/{id}/preference**") &&
+                            isProfessor) {
+                        throw new IllegalAccessError("Professors cannot modify preferences");
+                    }
                     filterChain.doFilter(request, response);
                 } catch (Exception e) {
                     log.error("Error: {}", e.getMessage());

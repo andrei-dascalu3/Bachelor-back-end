@@ -44,7 +44,7 @@ public class ProposalController {
         URI uri = URI.create(
                 ServletUriComponentsBuilder
                         .fromCurrentContextPath()
-                        .path("/api//users/{id}/proposal/save")
+                        .path("/api/users/{id}/proposal/save")
                         .toUriString()
         );
         Proposal proposal = convertToEntity(proposalDto, id);
@@ -66,7 +66,7 @@ public class ProposalController {
     @DeleteMapping("/users/{id}/proposals/{propId}/delete")
     public ResponseEntity<Long> deleteProposal(@PathVariable Long id, @PathVariable Long propId) {
         Proposal proposal = proposalService.getProposal(propId);
-        if(id != proposal.getAuthor().getId()) {
+        if (id != proposal.getAuthor().getId()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         proposalService.deleteProposal(propId);

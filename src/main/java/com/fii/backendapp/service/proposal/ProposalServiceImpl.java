@@ -19,7 +19,6 @@ import java.util.List;
 public class ProposalServiceImpl implements ProposalService {
 
     private final ProposalRepository proposalRepo;
-    private final UserRepository userRepo;
 
     @Override
     public Proposal saveProposal(Proposal proposal) {
@@ -47,7 +46,7 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     public void deleteProposal(Long id) {
-        log.info("Deleting proposal with id:{}", id);
+        log.info("Deleting proposal with id: {}", id);
         proposalRepo.deleteById(id);
     }
 }
