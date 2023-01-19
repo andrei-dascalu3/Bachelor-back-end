@@ -1,7 +1,11 @@
-package com.fii.backendapp.domain.proposal;
+package com.fii.backendapp.model.proposal;
 
-import com.fii.backendapp.domain.user.User;
-import com.fii.backendapp.domain.accord.Accord;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fii.backendapp.dto.ProposalDto;
+import com.fii.backendapp.model.user.User;
+import com.fii.backendapp.model.accord.Accord;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +17,10 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 public class Proposal {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,12 +29,12 @@ public class Proposal {
     private String title;
     @Column(nullable = false)
     private String description;
+    @Column(nullable = true)
     private Long places;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "prof_id", nullable = false)
+    @JsonBackReference
     private User author;
     @OneToOne(mappedBy = "proposal")
     private Accord accord;
-    @OneToMany(mappedBy = "proposal")
-    private Set<Resource> resources;
 }

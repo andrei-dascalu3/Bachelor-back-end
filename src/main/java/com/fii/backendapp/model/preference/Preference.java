@@ -1,7 +1,7 @@
-package com.fii.backendapp.domain.preference;
+package com.fii.backendapp.model.preference;
 
-import com.fii.backendapp.domain.proposal.Proposal;
-import com.fii.backendapp.domain.user.User;
+import com.fii.backendapp.model.proposal.Proposal;
+import com.fii.backendapp.model.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

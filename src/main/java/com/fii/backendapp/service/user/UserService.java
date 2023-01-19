@@ -5,8 +5,8 @@ package com.fii.backendapp.service.user;
 
 import java.util.List;
 
-import com.fii.backendapp.domain.user.Role;
-import com.fii.backendapp.domain.user.User;
+import com.fii.backendapp.model.user.Role;
+import com.fii.backendapp.model.user.User;
 
 /**
  * @author Andrei

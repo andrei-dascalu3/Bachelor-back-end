@@ -1,7 +1,10 @@
 package com.fii.backendapp.service.proposal;
 
-import com.fii.backendapp.domain.proposal.Proposal;
+import com.fii.backendapp.dto.ProposalDto;
+import com.fii.backendapp.model.proposal.Proposal;
+import com.fii.backendapp.model.user.User;
 import com.fii.backendapp.repository.ProposalRepository;
+import com.fii.backendapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,12 +19,11 @@ import java.util.List;
 public class ProposalServiceImpl implements ProposalService {
 
     private final ProposalRepository proposalRepo;
-
+    private final UserRepository userRepo;
 
     @Override
     public Proposal saveProposal(Proposal proposal) {
         log.info("Saving to the database a new proposal of user with id: {}", proposal.getAuthor().getId());
-        log.info(proposal.toString());
         return proposalRepo.save(proposal);
     }
 
@@ -38,8 +40,14 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public List<Proposal> getProposalsOfUser(Long uid) {
+    public List<Proposal> getUserProposals(Long uid) {
         log.info("Fetching all proposals of user with id: {}", uid);
-        return proposalRepo.findByProfId(uid);
+        return proposalRepo.findByAuthor_Id(uid);
+    }
+
+    @Override
+    public void deleteProposal(Long id) {
+        log.info("Deleting proposal with id:{}", id);
+        proposalRepo.deleteById(id);
     }
 }

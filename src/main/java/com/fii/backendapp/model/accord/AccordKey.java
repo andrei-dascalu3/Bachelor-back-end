@@ -1,4 +1,4 @@
-package com.fii.backendapp.domain.accord;
+package com.fii.backendapp.model.accord;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

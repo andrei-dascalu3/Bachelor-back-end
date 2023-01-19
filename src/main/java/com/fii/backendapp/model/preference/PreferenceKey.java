@@ -1,4 +1,4 @@
-package com.fii.backendapp.domain.preference;
+package com.fii.backendapp.model.preference;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

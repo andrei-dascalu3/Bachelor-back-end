@@ -1,4 +1,4 @@
-package com.fii.backendapp.domain.user;
+package com.fii.backendapp.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

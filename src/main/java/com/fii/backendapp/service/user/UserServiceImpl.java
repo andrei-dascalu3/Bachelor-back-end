@@ -15,8 +15,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.fii.backendapp.domain.user.Role;
-import com.fii.backendapp.domain.user.User;
+import com.fii.backendapp.model.user.Role;
+import com.fii.backendapp.model.user.User;
 import com.fii.backendapp.repository.RoleRepository;
 import com.fii.backendapp.repository.UserRepository;
 

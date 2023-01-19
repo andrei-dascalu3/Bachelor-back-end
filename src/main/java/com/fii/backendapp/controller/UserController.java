@@ -1,13 +1,14 @@
-package com.fii.backendapp.api;
+package com.fii.backendapp.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fii.backendapp.domain.proposal.Proposal;
-import com.fii.backendapp.domain.user.Role;
-import com.fii.backendapp.domain.user.User;
+import com.fii.backendapp.dto.UserDto;
+import com.fii.backendapp.model.proposal.Proposal;
+import com.fii.backendapp.model.user.Role;
+import com.fii.backendapp.model.user.User;
 import com.fii.backendapp.service.proposal.ProposalService;
 import com.fii.backendapp.service.user.UserService;
 import com.fii.backendapp.util.RoleToUserForm;
@@ -37,24 +38,31 @@ public class UserController {
     private final ProposalService proposalService;
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getUsers() {
-        return ResponseEntity.ok().body(userService.getUsers());
+    public ResponseEntity<List<UserDto>> getUsers() {
+        List<User> users = userService.getUsers();
+        List<UserDto> usersDto = users.stream().map(this::convertToDto).collect(Collectors.toList());
+        return ResponseEntity.ok().body(usersDto);
     }
 
     @GetMapping("/professors")
-    public ResponseEntity<List<User>> getProfessor() {return ResponseEntity.ok().body(userService.getProfessors());}
-
-    @GetMapping("/students")
-    public ResponseEntity<List<User>> getStudents() {return ResponseEntity.ok().body(userService.getStudents());}
-
-    @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUser(@PathVariable("id") Long userId) {
-        return ResponseEntity.ok().body(userService.getUser(userId));
+    public ResponseEntity<List<UserDto>> getProfessor() {
+        List<User> users = userService.getProfessors();
+        List<UserDto> usersDto = users.stream().map(this::convertToDto).collect(Collectors.toList());
+        return ResponseEntity.ok().body(usersDto);
     }
 
-    @GetMapping("/users/{id}/proposals")
-    public ResponseEntity<List<Proposal>> getAllProposalsOfUser(@PathVariable("id") Long uid) {
-        return ResponseEntity.ok().body(proposalService.getProposalsOfUser(uid));
+    @GetMapping("/students")
+    public ResponseEntity<List<UserDto>> getStudents() {
+        List<User> users = userService.getStudents();
+        List<UserDto> usersDto = users.stream().map(this::convertToDto).collect(Collectors.toList());
+        return ResponseEntity.ok().body(usersDto);
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UserDto> getUser(@PathVariable("id") Long userId) {
+        User user = userService.getUser(userId);
+        UserDto userDto = convertToDto(user);
+        return ResponseEntity.ok().body(userDto);
     }
 
     @PostMapping("/user/save")
@@ -110,5 +118,29 @@ public class UserController {
         } else {
             throw new RuntimeException("Refresh token is missing");
         }
+    }
+
+    private UserDto convertToDto(User user) {
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setFirstName(user.getFirstName());
+        userDto.setLastName(user.getLastName());
+        userDto.setUsername(user.getUsername());
+        userDto.setPassword(user.getPassword());
+        userDto.setDescription(user.getDescription());
+        userDto.setProfessor(user.isProfessor());
+        userDto.setRoles(user.getRoles());
+        return userDto;
+    }
+
+    private User convertToEntity(UserDto userDto) {
+        User user = userService.getUser(userDto.getId());
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setUsername(userDto.getUsername());
+        user.setDescription(userDto.getDescription());
+        user.setProfessor(userDto.isProfessor());
+        user.setPassword(userDto.getPassword());
+        return user;
     }
 }

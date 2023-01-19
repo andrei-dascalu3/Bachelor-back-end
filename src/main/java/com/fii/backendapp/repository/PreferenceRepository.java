@@ -1,6 +1,6 @@
 package com.fii.backendapp.repository;
 
-import com.fii.backendapp.domain.preference.Preference;
+import com.fii.backendapp.model.preference.Preference;
 
 import java.util.Set;
 

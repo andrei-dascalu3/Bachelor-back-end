@@ -5,7 +5,7 @@ package com.fii.backendapp.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.fii.backendapp.domain.user.User;
+import com.fii.backendapp.model.user.User;
 
 import java.util.List;
 
