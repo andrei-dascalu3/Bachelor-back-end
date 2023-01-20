@@ -29,6 +29,8 @@ public class Proposal {
     private String title;
     @Column(nullable = false)
     private String description;
+    @Column
+    private String resources;
     @Column(nullable = true)
     private Long places;
     @ManyToOne(fetch = FetchType.LAZY)

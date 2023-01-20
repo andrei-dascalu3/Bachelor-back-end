@@ -77,6 +77,7 @@ public class ProposalController {
         Proposal proposal = new Proposal();
         proposal.setTitle(proposalDto.getTitle());
         proposal.setDescription(proposalDto.getDescription());
+        proposal.setResources(proposalDto.getResources());
         proposal.setPlaces(proposalDto.getPlaces());
         User author = userService.getUser(profId);
         proposal.setAuthor(author);
@@ -88,6 +89,7 @@ public class ProposalController {
         proposalDto.setId(proposal.getId());
         proposalDto.setTitle(proposal.getTitle());
         proposalDto.setDescription(proposal.getDescription());
+        proposalDto.setResources(proposal.getResources());
         proposalDto.setPlaces(proposal.getPlaces());
         proposalDto.setProfId(proposal.getAuthor().getId());
         return proposalDto;

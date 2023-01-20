@@ -11,6 +11,7 @@ public class ProposalDto {
     private Long id;
     private String title;
     private String description;
+    private String resources;
     private Long places;
     private Long profId;
 }
