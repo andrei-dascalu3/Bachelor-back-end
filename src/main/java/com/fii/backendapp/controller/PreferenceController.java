@@ -65,18 +65,20 @@ public class PreferenceController {
         return new ResponseEntity<>(key, HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/users/{studId}/preferences/{propId}/exists")
+    public ResponseEntity<Boolean> preferenceExists(@PathVariable Long studId, @PathVariable Long propId) {
+        PreferenceKey key = new PreferenceKey(studId, propId);
+        boolean exists = preferenceService.existsPreference(key);
+        return ResponseEntity.ok().body(exists);
+    }
+
     private Preference convertToEntity(PreferenceDto preferenceDto, Long studId) {
         Preference preference = new Preference();
         Proposal proposal = proposalService.getProposal(preferenceDto.getProposalId());
-        System.out.println("prop");
         User student = userService.getUser(studId);
-        System.out.println("stud");
         preference.setProposal(proposal);
-        System.out.println("prop1");
         preference.setStudent(student);
-        System.out.println("stud1");
         preference.setRating(preferenceDto.getRating());
-        System.out.println("rate");
         return preference;
     }
 
@@ -85,6 +87,11 @@ public class PreferenceController {
         preferenceDto.setStudentId(preference.getStudent().getId());
         preferenceDto.setProposalId(preference.getProposal().getId());
         preferenceDto.setRating(preference.getRating());
+        preferenceDto.setTitle(preference.getProposal().getTitle());
+        preferenceDto.setDescription(preference.getProposal().getDescription());
+        preferenceDto.setResources(preference.getProposal().getResources());
+        preferenceDto.setProfUsername(preference.getProposal().getAuthor().getUsername());
+        preferenceDto.setPlaces(preference.getProposal().getPlaces());
         return preferenceDto;
     }
 }

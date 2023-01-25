@@ -48,4 +48,10 @@ public class PreferenceServiceImpl implements PreferenceService {
 //        preferenceRepo.deleteById(id);
         preferenceRepo.deleteByStudent_IdAndProposal_Id(id.getStudentId(), id.getProposalId());
     }
+
+    @Override
+    public boolean existsPreference(PreferenceKey id) {
+        log.info("Checking existence of preference with id (stud_id, prop_id): {}", id);
+        return preferenceRepo.existsByStudent_IdAndProposal_Id(id.getStudentId(), id.getProposalId());
+    }
 }

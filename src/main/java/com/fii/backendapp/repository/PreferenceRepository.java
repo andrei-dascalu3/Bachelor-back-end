@@ -13,5 +13,5 @@ public interface PreferenceRepository extends JpaRepository<Preference, Long> {
     Preference findById(PreferenceKey id);
     void deleteById(PreferenceKey id);
     void deleteByStudent_IdAndProposal_Id(Long studentId, Long proposalId);
-
+    boolean existsByStudent_IdAndProposal_Id(Long studentId, Long proposalId);
 }
