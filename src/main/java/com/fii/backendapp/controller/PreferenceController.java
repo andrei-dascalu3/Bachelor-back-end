@@ -57,6 +57,16 @@ public class PreferenceController {
         return ResponseEntity.created(uri).body(convertToDto(preferenceSaved));
     }
 
+    @PutMapping("/users/{id}/preferences/{propId}/update")
+    public ResponseEntity<PreferenceDto> updatePreferenceRating(@RequestBody PreferenceDto preferenceDto, @PathVariable Long id,
+                                                                @PathVariable Long propId) {
+        PreferenceKey key = new PreferenceKey(id, propId);
+        Preference preference = preferenceService.getPreference(key);
+        preference.setRating(preferenceDto.getRating());
+        Preference updatedPreference = preferenceService.savePreference(preference);
+        return ResponseEntity.ok().body(convertToDto(updatedPreference));
+    }
+
     @DeleteMapping("/users/{id}/preferences/{propId}/delete")
     public ResponseEntity<PreferenceKey> deletePreference(@PathVariable Long id, @PathVariable Long propId) {
         PreferenceKey key = new PreferenceKey(id, propId);

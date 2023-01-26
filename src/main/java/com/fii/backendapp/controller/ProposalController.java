@@ -59,8 +59,8 @@ public class ProposalController {
         proposal.setTitle(proposalDto.getTitle());
         proposal.setDescription(proposalDto.getDescription());
         proposal.setPlaces(proposalDto.getPlaces());
-        Proposal proposalUpdated = proposalService.saveProposal(proposal);
-        return ResponseEntity.ok().body(convertToDto(proposalUpdated));
+        Proposal updatedProposal = proposalService.saveProposal(proposal);
+        return ResponseEntity.ok().body(convertToDto(updatedProposal));
     }
 
     @DeleteMapping("/users/{id}/proposals/{propId}/delete")

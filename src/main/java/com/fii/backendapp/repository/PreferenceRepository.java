@@ -9,6 +9,7 @@ import java.util.Set;
 
 public interface PreferenceRepository extends JpaRepository<Preference, Long> {
     List<Preference> findByStudent_Id(Long studId);
+    List<Preference> findByStudent_IdOrderByRatingDesc(Long studId);
     List<Preference> findByProposal_Id(Long propId);
     Preference findById(PreferenceKey id);
     void deleteById(PreferenceKey id);
