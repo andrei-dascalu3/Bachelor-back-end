@@ -11,5 +11,5 @@ public interface PreferenceService {
     Preference getPreference(PreferenceKey id);
     Preference savePreference(Preference preference);
     void deletePreference(PreferenceKey id);
-    boolean existsPreference(PreferenceKey id);
+    boolean exists(PreferenceKey id);
 }

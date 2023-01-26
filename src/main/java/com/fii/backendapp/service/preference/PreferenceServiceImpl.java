@@ -33,7 +33,7 @@ public class PreferenceServiceImpl implements PreferenceService {
     @Override
     public Preference getPreference(PreferenceKey key) {
         log.info("Fetching preference with id (stud_id, prop_id): {}", key);
-        return preferenceRepo.findById(key);
+        return preferenceRepo.findById(key).get();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class PreferenceServiceImpl implements PreferenceService {
     }
 
     @Override
-    public boolean existsPreference(PreferenceKey id) {
+    public boolean exists(PreferenceKey id) {
         log.info("Checking existence of preference with id (stud_id, prop_id): {}", id);
         return preferenceRepo.existsByStudent_IdAndProposal_Id(id.getStudentId(), id.getProposalId());
     }

@@ -1,7 +1,6 @@
 package com.fii.backendapp.controller;
 
 import com.fii.backendapp.dto.PreferenceDto;
-import com.fii.backendapp.dto.ProposalDto;
 import com.fii.backendapp.model.preference.Preference;
 import com.fii.backendapp.model.preference.PreferenceKey;
 import com.fii.backendapp.model.proposal.Proposal;
@@ -78,7 +77,7 @@ public class PreferenceController {
     @GetMapping("/users/{studId}/preferences/{propId}/exists")
     public ResponseEntity<Boolean> preferenceExists(@PathVariable Long studId, @PathVariable Long propId) {
         PreferenceKey key = new PreferenceKey(studId, propId);
-        boolean exists = preferenceService.existsPreference(key);
+        boolean exists = preferenceService.exists(key);
         return ResponseEntity.ok().body(exists);
     }
 

@@ -14,7 +14,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Accord {
     @EmbeddedId
-    private AccordKey id;
+    private AccordKey id = new AccordKey();
+    private boolean isAccepted;
     @ManyToOne
     @MapsId("studentId")
     @JoinColumn(name = "stud_id")
@@ -26,5 +27,4 @@ public class Accord {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "prop_id", referencedColumnName = "id")
     private Proposal proposal;
-
 }
