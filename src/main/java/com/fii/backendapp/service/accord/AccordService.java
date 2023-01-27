@@ -13,4 +13,5 @@ public interface AccordService {
     Accord saveAccord(Accord accord);
     void deleteAccord(AccordKey id);
     boolean exists(AccordKey id);
+    boolean existsByStudent_IdAndIsAccepted(Long studId, boolean isAccepted);
 }

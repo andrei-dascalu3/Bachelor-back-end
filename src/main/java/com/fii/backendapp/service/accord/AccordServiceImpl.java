@@ -59,4 +59,10 @@ public class AccordServiceImpl implements AccordService {
         log.info("Checking existence of accord with id (stud_id, prof_id): {}", id);
         return accordRepo.existsById(id);
     }
+
+    @Override
+    public boolean existsByStudent_IdAndIsAccepted(Long studId, boolean isAccepted) {
+        log.info("Checking if student with id {} has accords accepted = ", studId, isAccepted);
+        return accordRepo.existsByStudent_IdAndIsAccepted(studId, isAccepted);
+    }
 }

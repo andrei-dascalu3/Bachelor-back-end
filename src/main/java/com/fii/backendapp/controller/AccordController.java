@@ -35,6 +35,12 @@ public class AccordController {
         return ResponseEntity.ok().body(accordsDto);
     }
 
+    @GetMapping("/accords/exists")
+    public ResponseEntity<Boolean> accordsAcceptedByStudentExist(@RequestParam("studId") Long studId) {
+        Boolean exists = accordService.existsByStudent_IdAndIsAccepted(studId, true);
+        return ResponseEntity.ok().body(exists);
+    }
+
     @GetMapping("/students/{id}/accords")
     public ResponseEntity<List<AccordDto>> getStudentAccords(@PathVariable Long id) {
         List<Accord> accords = accordService.getStudentAccords(id);
@@ -49,7 +55,7 @@ public class AccordController {
         return ResponseEntity.ok().body(accordsDto);
     }
 
-    @PostMapping("/professors/{id}/accords/save")
+    @PostMapping("/professors/{id}/accord/save")
     public ResponseEntity<AccordDto> saveAccord(@RequestBody AccordDto accordDto, @PathVariable Long id) {
         URI uri = URI.create(
                 ServletUriComponentsBuilder
@@ -99,6 +105,9 @@ public class AccordController {
         accordDto.setPropId(accord.getProposal().getId());
         accordDto.setProfId(accord.getProfessor().getId());
         accordDto.setStudId(accord.getStudent().getId());
+        accordDto.setStudUsername(accord.getStudent().getUsername());
+        accordDto.setProfUsername(accord.getProfessor().getUsername());
+        accordDto.setPropTitle(accord.getProposal().getTitle());
         return accordDto;
     }
 }

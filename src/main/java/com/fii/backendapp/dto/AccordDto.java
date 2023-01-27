@@ -12,4 +12,7 @@ public class AccordDto {
     Long studId;
     Long propId;
     boolean isAccepted;
+    String studUsername;
+    String profUsername;
+    String propTitle;
 }

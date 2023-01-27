@@ -13,7 +13,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,8 +35,14 @@ public class ProposalController {
     }
 
     @GetMapping("/users/{id}/proposals")
-    public ResponseEntity<List<ProposalDto>> getUserProposals(@PathVariable Long id) {
-        List<Proposal> proposals = proposalService.getUserProposals(id);
+    public ResponseEntity<List<ProposalDto>> getUserProposals(@PathVariable Long id,
+                                                              @RequestParam("available") Optional<Boolean> available) {
+        List<Proposal> proposals = new ArrayList<>();
+        if (available.isPresent() && available.get()) {
+            proposals = proposalService.getAvailableUserProposals(id);
+        } else {
+            proposals = proposalService.getUserProposals(id);
+        }
         List<ProposalDto> proposalsDto = proposals.stream().map(this::convertToDto).collect(Collectors.toList());
         return ResponseEntity.ok().body(proposalsDto);
     }

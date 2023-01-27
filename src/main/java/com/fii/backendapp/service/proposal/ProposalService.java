@@ -11,4 +11,5 @@ public interface ProposalService {
     List<Proposal> getAllProposals();
     List<Proposal> getUserProposals(Long uid);
     void deleteProposal(Long id);
+    List<Proposal> getAvailableUserProposals(Long id);
 }
