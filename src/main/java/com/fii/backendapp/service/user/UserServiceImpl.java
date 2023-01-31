@@ -6,7 +6,9 @@ package com.fii.backendapp.service.user;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.fii.backendapp.repository.UserIdView;
 import com.fii.backendapp.util.CustomUser;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,8 +58,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User saveUser(User user) {
-        log.info("Saving new user to the database");
-        log.info(user.toString());
+        log.info("Saving new user to the database with username {}", user.getUsername());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }
@@ -103,5 +104,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public List<User> getProfessors() {
         log.info("Fetching all professors");
         return userRepo.findByIsProfessor(true);
+    }
+
+    @Override
+    public List<Long> getProfessorIds() {
+        log.info("Fetching all professor ids");
+        return userRepo.getUserByIsProfessor(true).stream().map(UserIdView::getId).collect(Collectors.toList());
     }
 }

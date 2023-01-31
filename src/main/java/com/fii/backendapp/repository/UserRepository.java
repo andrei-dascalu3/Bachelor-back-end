@@ -15,4 +15,5 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
 	User findByUsername(String username);
 	List<User> findByIsProfessor(boolean isProfessor);
+	List<UserIdView> getUserByIsProfessor(boolean isProfessor);
 }
