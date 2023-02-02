@@ -25,6 +25,12 @@ public class AccordServiceImpl implements AccordService {
     }
 
     @Override
+    public List<Accord> getAllAcceptedAccords() {
+        log.info("Fetching accepted accords");
+        return accordRepo.findByIsAccepted(true);
+    }
+
+    @Override
     public List<Accord> getStudentAccords(Long studId) {
         log.info("Fetching all accords of student with id: {}", studId);
         return accordRepo.findByStudent_Id(studId);

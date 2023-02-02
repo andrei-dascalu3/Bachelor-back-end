@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface AccordService {
     List<Accord> getAllAccords();
+    List<Accord> getAllAcceptedAccords();
     List<Accord> getStudentAccords(Long studId);
     List<Accord> getProfessorAccords(Long profId);
     Accord getAccord(AccordKey id);

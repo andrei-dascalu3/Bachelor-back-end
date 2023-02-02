@@ -30,8 +30,9 @@ public class Populator {
     private static Integer professorCount;
     private static Integer maxTopicPlaces = 3;
     private static Integer topicProb = 20;
-    private static Integer professorProb = 9;
-    private static Integer preferenceCount = 10;
+    private static Integer professorProb = 10;
+    private static Integer preferenceCount = 20;
+    private static Double propsToStudsRatio = 1.2;
 
     public Populator(UserService userService, ProposalService proposalService, PreferenceService preferenceService,
                      AccordService accordService, Integer userCount, Integer adminCount) {
@@ -90,7 +91,7 @@ public class Populator {
 
     private void populateProposals() {
         Integer studentCount = userCount - professorCount;
-        Double auxPlaceCount = Math.ceil(new Double(studentCount) / professorCount);
+        Double auxPlaceCount = Math.ceil(studentCount.doubleValue() / professorCount * propsToStudsRatio);
         Long placeCount = auxPlaceCount.longValue();
         Long places;
         List<User> professors = userService.getProfessors();
@@ -116,10 +117,15 @@ public class Populator {
         List<User> students = userService.getStudents();
         List<Proposal> preferredProposals;
         Preference newPreference;
-        for(var student: students) {
+        for (var student : students) {
             Collections.shuffle(proposals);
-            preferredProposals = proposals.subList(0, preferenceCount);
-            for(var proposal: preferredProposals) {
+            if (preferenceCount < proposals.size()) {
+                preferredProposals = proposals.subList(0, preferenceCount);
+            }
+            else {
+                preferredProposals = proposals.subList(0, proposals.size());
+            }
+            for (var proposal : preferredProposals) {
                 Long rating = new Long(randomInt(1, 101));
                 newPreference = new Preference();
                 newPreference.setStudent(student);

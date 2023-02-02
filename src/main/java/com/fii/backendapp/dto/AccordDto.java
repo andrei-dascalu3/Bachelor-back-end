@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccordDto {
-    Long profId;
-    Long studId;
-    Long propId;
-    boolean isAccepted;
-    String studUsername;
-    String profUsername;
-    String propTitle;
+    private Long profId;
+    private Long studId;
+    private Long propId;
+    private boolean isAccepted;
+    private String studUsername;
+    private String profUsername;
+    private String propTitle;
 }
