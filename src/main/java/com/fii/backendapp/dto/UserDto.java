@@ -18,5 +18,6 @@ public class UserDto {
     private String password;
     private boolean isProfessor;
     private String description;
+    private String imagePath;
     private Collection<Role> roles;
 }

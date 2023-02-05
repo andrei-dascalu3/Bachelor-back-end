@@ -32,6 +32,7 @@ public class User {
     private String password;
     private boolean isProfessor;
     private String description;
+    private String imagePath;
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Proposal> proposals;

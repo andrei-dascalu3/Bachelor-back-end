@@ -74,7 +74,7 @@ public class Populator {
             email = email.replaceAll("[^a-zA-Z0-9.@]", "").toLowerCase();
             description = createDescription(email);
             isProfessor = decide(professorProb);
-            addedUser = new User(null, firstName, lastName, email, password, isProfessor, description,
+            addedUser = new User(null, firstName, lastName, email, password, isProfessor, description, null,
                     new ArrayList<>(), new ArrayList<>());
             if (isProfessor) {
                 professorCount++;
@@ -121,8 +121,7 @@ public class Populator {
             Collections.shuffle(proposals);
             if (preferenceCount < proposals.size()) {
                 preferredProposals = proposals.subList(0, preferenceCount);
-            }
-            else {
+            } else {
                 preferredProposals = proposals.subList(0, proposals.size());
             }
             for (var proposal : preferredProposals) {
