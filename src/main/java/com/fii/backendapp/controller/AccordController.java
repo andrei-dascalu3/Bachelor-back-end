@@ -8,14 +8,20 @@ import com.fii.backendapp.model.user.User;
 import com.fii.backendapp.service.accord.AccordService;
 import com.fii.backendapp.service.proposal.ProposalService;
 import com.fii.backendapp.service.user.UserService;
+import com.fii.backendapp.util.CustomUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -56,35 +62,56 @@ public class AccordController {
     }
 
     @PostMapping("/professors/{id}/accord/save")
-    public ResponseEntity<AccordDto> saveAccord(@RequestBody AccordDto accordDto, @PathVariable Long id) {
-        URI uri = URI.create(
-                ServletUriComponentsBuilder
-                        .fromCurrentContextPath()
-                        .path("/api/professors/{id}/accords/save")
-                        .toUriString()
-        );
-        Accord accord = convertToEntity(accordDto, id);
-        accord.setAccepted(false);
-        Accord accordSaved = accordService.saveAccord(accord);
-        return ResponseEntity.created(uri).body(convertToDto(accordSaved));
+    public ResponseEntity<AccordDto> saveAccord(@RequestBody AccordDto accordDto, @PathVariable Long id,
+                                                Authentication authentication) {
+        String username = (String) authentication.getPrincipal();
+        Long uid = userService.getUser(username).getId();
+        if (uid == id) {
+            URI uri = URI.create(
+                    ServletUriComponentsBuilder
+                            .fromCurrentContextPath()
+                            .path("/api/professors/{id}/accords/save")
+                            .toUriString()
+            );
+            Accord accord = convertToEntity(accordDto, id);
+            accord.setAccepted(false);
+            Accord accordSaved = accordService.saveAccord(accord);
+            return ResponseEntity.created(uri).body(convertToDto(accordSaved));
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to create this accord");
+        }
     }
 
     @PutMapping("/students/{id}/accords/{profId}/update")
     public ResponseEntity<AccordDto> updateAccordStatus(@RequestBody AccordDto accordDto, @PathVariable Long id,
-                                                        @PathVariable Long profId) {
-        AccordKey key = new AccordKey(id, profId);
-        Accord accord = accordService.getAccord(key);
-        accord.setAccepted(accordDto.isAccepted());
-        Accord updatedAccord = accordService.saveAccord(accord);
-        return ResponseEntity.ok().body(convertToDto(updatedAccord));
+                                                        @PathVariable Long profId, Authentication authentication) {
+        String username = (String) authentication.getPrincipal();
+        Long uid = userService.getUser(username).getId();
+        if (uid == id) {
+            AccordKey key = new AccordKey(id, profId);
+            Accord accord = accordService.getAccord(key);
+            accord.setAccepted(accordDto.isAccepted());
+            Accord updatedAccord = accordService.saveAccord(accord);
+            return ResponseEntity.ok().body(convertToDto(updatedAccord));
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to update this accord");
+        }
     }
 
     @DeleteMapping("/professors/{id}/accords/{studId}/delete")
-    public ResponseEntity<AccordKey> deleteAccord(@PathVariable Long id, @PathVariable Long profId) {
-        AccordKey key = new AccordKey(id, profId);
-        Accord accord = accordService.getAccord(key);
-        accordService.deleteAccord(key);
-        return new ResponseEntity<>(key, HttpStatus.NO_CONTENT);
+    public ResponseEntity<AccordKey> deleteAccord(@PathVariable Long id, @PathVariable Long profId,
+                                                  Authentication authentication) {
+        String username = (String) authentication.getPrincipal();
+        Long uid = userService.getUser(username).getId();
+        if (uid == id) {
+            AccordKey key = new AccordKey(id, profId);
+            Accord accord = accordService.getAccord(key);
+            accordService.deleteAccord(key);
+            return new ResponseEntity<>(key, HttpStatus.NO_CONTENT);
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to delete this accord");
+        }
     }
 
     private Accord convertToEntity(AccordDto accordDto, Long id) {

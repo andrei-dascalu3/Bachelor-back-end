@@ -11,7 +11,9 @@ import com.fii.backendapp.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -44,34 +46,56 @@ public class PreferenceController {
 
     @PostMapping("/users/{id}/preference/save")
     public ResponseEntity<PreferenceDto> savePreference(@RequestBody PreferenceDto preferenceDto,
-                                                        @PathVariable Long id) {
-        URI uri = URI.create(
-                ServletUriComponentsBuilder
-                        .fromCurrentContextPath()
-                        .path("/api/users/{id}/preference/save")
-                        .toUriString()
-        );
-        Preference preference = convertToEntity(preferenceDto, id);
-        Preference preferenceSaved = preferenceService.savePreference(preference);
-        return ResponseEntity.created(uri).body(convertToDto(preferenceSaved));
+                                                        @PathVariable Long id, Authentication authentication) {
+        String username = (String) authentication.getPrincipal();
+        Long uid = userService.getUser(username).getId();
+        if (uid == id) {
+            URI uri = URI.create(
+                    ServletUriComponentsBuilder
+                            .fromCurrentContextPath()
+                            .path("/api/users/{id}/preference/save")
+                            .toUriString()
+            );
+            Preference preference = convertToEntity(preferenceDto, id);
+            Preference preferenceSaved = preferenceService.savePreference(preference);
+            return ResponseEntity.created(uri).body(convertToDto(preferenceSaved));
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to create this preference");
+        }
     }
 
     @PutMapping("/users/{id}/preferences/{propId}/update")
-    public ResponseEntity<PreferenceDto> updatePreferenceRating(@RequestBody PreferenceDto preferenceDto, @PathVariable Long id,
-                                                                @PathVariable Long propId) {
-        PreferenceKey key = new PreferenceKey(id, propId);
-        Preference preference = preferenceService.getPreference(key);
-        preference.setRating(preferenceDto.getRating());
-        Preference updatedPreference = preferenceService.savePreference(preference);
-        return ResponseEntity.ok().body(convertToDto(updatedPreference));
+    public ResponseEntity<PreferenceDto> updatePreferenceRating(@RequestBody PreferenceDto preferenceDto,
+                                                                @PathVariable Long id,
+                                                                @PathVariable Long propId,
+                                                                Authentication authentication) {
+        String username = (String) authentication.getPrincipal();
+        Long uid = userService.getUser(username).getId();
+        if (uid == id) {
+            PreferenceKey key = new PreferenceKey(id, propId);
+            Preference preference = preferenceService.getPreference(key);
+            preference.setRating(preferenceDto.getRating());
+            Preference updatedPreference = preferenceService.savePreference(preference);
+            return ResponseEntity.ok().body(convertToDto(updatedPreference));
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to update this preference");
+        }
     }
 
     @DeleteMapping("/users/{id}/preferences/{propId}/delete")
-    public ResponseEntity<PreferenceKey> deletePreference(@PathVariable Long id, @PathVariable Long propId) {
-        PreferenceKey key = new PreferenceKey(id, propId);
-        Preference preference = preferenceService.getPreference(key);
-        preferenceService.deletePreference(key);
-        return new ResponseEntity<>(key, HttpStatus.NO_CONTENT);
+    public ResponseEntity<PreferenceKey> deletePreference(@PathVariable Long id, @PathVariable Long propId,
+                                                          Authentication authentication) {
+        String username = (String) authentication.getPrincipal();
+        Long uid = userService.getUser(username).getId();
+        if (uid == id) {
+            PreferenceKey key = new PreferenceKey(id, propId);
+            Preference preference = preferenceService.getPreference(key);
+            preferenceService.deletePreference(key);
+            return new ResponseEntity<>(key, HttpStatus.NO_CONTENT);
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to delete this preference");
+        }
     }
 
     @GetMapping("/users/{studId}/preferences/{propId}/exists")

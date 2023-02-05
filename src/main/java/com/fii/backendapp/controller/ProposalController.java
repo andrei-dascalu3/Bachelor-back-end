@@ -8,7 +8,9 @@ import com.fii.backendapp.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -48,37 +50,58 @@ public class ProposalController {
     }
 
     @PostMapping("/users/{id}/proposal/save")
-    public ResponseEntity<ProposalDto> saveProposal(@RequestBody ProposalDto proposalDto, @PathVariable Long id) {
-        URI uri = URI.create(
-                ServletUriComponentsBuilder
-                        .fromCurrentContextPath()
-                        .path("/api/users/{id}/proposal/save")
-                        .toUriString()
-        );
-        Proposal proposal = convertToEntity(proposalDto, id);
-        Proposal proposalSaved = proposalService.saveProposal(proposal);
-        return ResponseEntity.created(uri).body(convertToDto(proposalSaved));
+    public ResponseEntity<ProposalDto> saveProposal(@RequestBody ProposalDto proposalDto, @PathVariable Long id,
+                                                    Authentication authentication) {
+        String username = (String) authentication.getPrincipal();
+        Long uid = userService.getUser(username).getId();
+        if (uid == id) {
+            URI uri = URI.create(
+                    ServletUriComponentsBuilder
+                            .fromCurrentContextPath()
+                            .path("/api/users/{id}/proposal/save")
+                            .toUriString()
+            );
+            Proposal proposal = convertToEntity(proposalDto, id);
+            Proposal proposalSaved = proposalService.saveProposal(proposal);
+            return ResponseEntity.created(uri).body(convertToDto(proposalSaved));
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to create this proposal");
+        }
     }
 
     @PutMapping("/users/{id}/proposals/{propId}/update")
     public ResponseEntity<ProposalDto> updateProposal(@RequestBody ProposalDto proposalDto, @PathVariable Long id,
-                                                      @PathVariable Long propId) {
-        Proposal proposal = proposalService.getProposal(propId);
-        proposal.setTitle(proposalDto.getTitle());
-        proposal.setDescription(proposalDto.getDescription());
-        proposal.setPlaces(proposalDto.getPlaces());
-        Proposal updatedProposal = proposalService.saveProposal(proposal);
-        return ResponseEntity.ok().body(convertToDto(updatedProposal));
+                                                      @PathVariable Long propId, Authentication authentication) {
+        String username = (String) authentication.getPrincipal();
+        Long uid = userService.getUser(username).getId();
+        if (uid == id) {
+            Proposal proposal = proposalService.getProposal(propId);
+            proposal.setTitle(proposalDto.getTitle());
+            proposal.setDescription(proposalDto.getDescription());
+            proposal.setPlaces(proposalDto.getPlaces());
+            Proposal updatedProposal = proposalService.saveProposal(proposal);
+            return ResponseEntity.ok().body(convertToDto(updatedProposal));
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to update this proposal");
+        }
     }
 
     @DeleteMapping("/users/{id}/proposals/{propId}/delete")
-    public ResponseEntity<Long> deleteProposal(@PathVariable Long id, @PathVariable Long propId) {
-        Proposal proposal = proposalService.getProposal(propId);
-        if (id != proposal.getAuthor().getId()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    public ResponseEntity<Long> deleteProposal(@PathVariable Long id, @PathVariable Long propId,
+                                               Authentication authentication) {
+        String username = (String) authentication.getPrincipal();
+        Long uid = userService.getUser(username).getId();
+        if (uid == id) {
+            Proposal proposal = proposalService.getProposal(propId);
+            if (id != proposal.getAuthor().getId()) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+            proposalService.deleteProposal(propId);
+            return new ResponseEntity<>(propId, HttpStatus.NO_CONTENT);
         }
-        proposalService.deleteProposal(propId);
-        return new ResponseEntity<>(propId, HttpStatus.NO_CONTENT);
+        else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to delete this proposal");
+        }
     }
 
     private Proposal convertToEntity(ProposalDto proposalDto, Long profId) {

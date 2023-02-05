@@ -25,6 +25,7 @@ public class Convertor {
     private final ProposalService proposalService;
     private final PreferenceService preferenceService;
     private List<Long> studIds, propIds;
+    private Map<Long, Long> accordIds = new HashMap<>();
     private Map<Long, Integer> studIndices = new HashMap<>();
     private Map<Long, List<Integer>> propIndices = new HashMap<>();
     private Map<Edge, Double> c;
@@ -47,8 +48,8 @@ public class Convertor {
                 if (prevRating == 0 || prevRating > pref.getRating()) {
                     cost += 1.0;
                 }
-                indices =propIndices.get(propId);
-                for(var j : indices) {
+                indices = propIndices.get(propId);
+                for (var j : indices) {
                     c.put(new Edge(i, j), cost);
                 }
                 prevRating = pref.getRating();
@@ -61,9 +62,13 @@ public class Convertor {
         List<Accord> accords = accordService.getAllAcceptedAccords();
         List<Long> assignedStudIds = new ArrayList<>();
         List<Long> assignedPropIds = new ArrayList<>();
+        Long assignedStudId, assignedPropId;
         for (var accord : accords) {
-            assignedStudIds.add(accord.getStudent().getId());
-            assignedPropIds.add(accord.getProposal().getId());
+            assignedStudId = accord.getStudent().getId();
+            assignedPropId = accord.getProposal().getId();
+            accordIds.put(assignedStudId, assignedPropId);
+            assignedStudIds.add(assignedStudId);
+            assignedPropIds.add(assignedPropId);
         }
         // fetching student ids
         studIds = userService.getStudents().stream().map(User::getId).collect(Collectors.toList());
@@ -82,12 +87,12 @@ public class Convertor {
             }
         }
         // filtering out assigned students
-        for (var assignedStudId : assignedStudIds) {
-            studIds.remove(assignedStudId);
+        for (var id : assignedStudIds) {
+            studIds.remove(id);
         }
         // filtering out assigned proposals
-        for (var assignedPropId : assignedPropIds) {
-            propIds.remove(assignedPropId);
+        for (var id : assignedPropIds) {
+            propIds.remove(id);
         }
         // mapping student ids to their indices from studIds
         for (int i = 0; i < studIds.size(); ++i) {

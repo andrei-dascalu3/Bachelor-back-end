@@ -1,4 +1,4 @@
-package com.fii.backendapp.dto;
+package com.fii.backendapp.dto.matching;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatchingDto {
-    private Long studentId;
-    private Long proposalId;
+    private MatchingStudentDto student;
+    private MatchingProposalDto proposal;
     private Double cost;
 }

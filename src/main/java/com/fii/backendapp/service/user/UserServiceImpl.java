@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             log.error("User not found in the database");
             throw new UsernameNotFoundException("User not found in the database");
         } else {
-            log.info("User {} found in the database", username);
+            // log.info("User {} found in the database", username);
         }
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         user.getRoles().forEach(role -> {
@@ -58,20 +58,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User saveUser(User user) {
-        log.info("Saving new user to the database with username {}", user.getUsername());
+        // log.info("Saving new user to the database with username {}", user.getUsername());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }
 
     @Override
     public Role saveRole(Role role) {
-        log.info("Saving new role {} to the database", role.getName());
+        // log.info("Saving new role {} to the database", role.getName());
         return roleRepo.save(role);
     }
 
     @Override
     public void addRoleToUser(String username, String roleName) {
-        log.info("Adding role {} to user {}", roleName, username);
+        // log.info("Adding role {} to user {}", roleName, username);
         User user = userRepo.findByUsername(username);
         Role role = roleRepo.findByName(roleName);
         user.getRoles().add(role);
@@ -79,36 +79,36 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User getUser(String username) {
-        log.info("Fetching user {}", username);
+        // log.info("Fetching user {}", username);
         return userRepo.findByUsername(username);
     }
 
     public User getUser(Long id) {
-        log.info("Fetching user with id: {}", id);
+        // log.info("Fetching user with id: {}", id);
         return userRepo.findById(id).get();
     }
 
     @Override
     public List<User> getUsers() {
-        log.info("Fetching all users");
+        // log.info("Fetching all users");
         return userRepo.findAll();
     }
 
     @Override
     public List<User> getStudents() {
-        log.info("Fetching all students");
+        // log.info("Fetching all students");
         return userRepo.findByIsProfessor(false);
     }
 
     @Override
     public List<User> getProfessors() {
-        log.info("Fetching all professors");
+        // log.info("Fetching all professors");
         return userRepo.findByIsProfessor(true);
     }
 
     @Override
     public List<Long> getProfessorIds() {
-        log.info("Fetching all professor ids");
+        // log.info("Fetching all professor ids");
         return userRepo.getUserByIsProfessor(true).stream().map(UserIdView::getId).collect(Collectors.toList());
     }
 }

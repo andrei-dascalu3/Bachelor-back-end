@@ -3,9 +3,11 @@ package com.fii.backendapp.controller;
 import com.fii.backendapp.algorithm.AssignAlgorithm;
 import com.fii.backendapp.algorithm.Assignation;
 import com.fii.backendapp.algorithm.Convertor;
-import com.fii.backendapp.dto.AccordDto;
-import com.fii.backendapp.dto.MatchingDto;
-import com.fii.backendapp.model.accord.Accord;
+import com.fii.backendapp.dto.matching.MatchingDto;
+import com.fii.backendapp.dto.matching.MatchingProposalDto;
+import com.fii.backendapp.dto.matching.MatchingStudentDto;
+import com.fii.backendapp.model.proposal.Proposal;
+import com.fii.backendapp.model.user.User;
 import com.fii.backendapp.service.accord.AccordService;
 import com.fii.backendapp.service.preference.PreferenceService;
 import com.fii.backendapp.service.proposal.ProposalService;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -33,25 +35,78 @@ public class MatchingController {
     private final PreferenceService preferenceService;
 
     @GetMapping("/matchings")
-    public ResponseEntity<List<MatchingDto>> getAllAccords() {
+    public ResponseEntity<List<MatchingDto>> getAllMatchings() {
         Convertor convertor = new Convertor(accordService, userService, proposalService, preferenceService);
         convertor.initialize();
+        // get ids indexed
         var studIds = convertor.getStudIds();
         var propIds = convertor.getPropIds();
+        var accordIds = convertor.getAccordIds();
+
+        // get cost matrix
         var c = convertor.getC();
+
+        // solve
         AssignAlgorithm algo = new AssignAlgorithm(studIds.size(), propIds.size(), c);
         var solution = algo.solve();
+
+        // converting solution to matchings
+        var response = convertSolutionToResponse(solution, studIds, propIds, accordIds);
+        return ResponseEntity.ok().body(response);
+    }
+
+    private List<MatchingDto> convertSolutionToResponse(Map<Integer, Assignation> solution, List<Long> studIds,
+                                                        List<Long> propIds, Map<Long, Long> accordIds) {
         List<MatchingDto> response = new ArrayList<>();
         Long studentId, proposalId;
         Assignation assignation;
         Double cost;
+        // accords
+        if(!accordIds.isEmpty()) {
+            for (var i : accordIds.keySet()) {
+                studentId = i;
+                proposalId = accordIds.get(i);
+                cost = 0.0;
+                response.add(convertSolutionToDto(studentId, proposalId, cost));
+            }
+        }
+        // computed matchings
         for (int i = 0; i < solution.size(); ++i) {
             assignation = solution.get(i);
             studentId = studIds.get(i);
             proposalId = propIds.get(assignation.getEnd());
             cost = assignation.getCost();
-            response.add(new MatchingDto(studentId, proposalId, cost));
+            response.add(convertSolutionToDto(studentId, proposalId, cost));
         }
-        return ResponseEntity.ok().body(response);
+        return response;
+    }
+
+    private MatchingDto convertSolutionToDto(Long studentId, Long proposalId, Double cost) {
+        User student = userService.getUser(studentId);
+        Proposal proposal = proposalService.getProposal(proposalId);
+        MatchingStudentDto matchingStudentDto = convertStudentToMatchingStudentDto(student);
+        MatchingProposalDto matchingProposalDto = convertProposalToMatchingProposalDto(proposal);
+        MatchingDto matchingDto = new MatchingDto(matchingStudentDto, matchingProposalDto, cost);
+        return matchingDto;
+    }
+
+    private MatchingStudentDto convertStudentToMatchingStudentDto(User student) {
+        MatchingStudentDto matchingStudentDto = new MatchingStudentDto(
+                student.getId(),
+                student.getFirstName(),
+                student.getLastName(),
+                student.getUsername());
+        return matchingStudentDto;
+    }
+
+    private MatchingProposalDto convertProposalToMatchingProposalDto(Proposal proposal) {
+        MatchingProposalDto matchingProposalDto = new MatchingProposalDto(
+                proposal.getId(),
+                proposal.getTitle(),
+                proposal.getDescription(),
+                proposal.getResources(),
+                proposal.getAuthor().getUsername()
+        );
+        return matchingProposalDto;
     }
 }

@@ -25,14 +25,14 @@ public class BackEndAppApplication {
         SpringApplication.run(BackEndAppApplication.class, args);
     }
 
-    @Bean
-    CommandLineRunner run(UserService userService, ProposalService proposalService,
-                          PreferenceService preferenceService, AccordService accordService) {
-        return args -> {
-            Populator populator = new Populator(userService, proposalService, preferenceService, accordService, 500, 2);
-            populator.populate();
-        };
-    }
+//    @Bean
+//    CommandLineRunner run(UserService userService, ProposalService proposalService,
+//                          PreferenceService preferenceService, AccordService accordService) {
+//        return args -> {
+//            Populator populator = new Populator(userService, proposalService, preferenceService, accordService, 500, 2);
+//            populator.populate();
+//        };
+//    }
 
     @Bean
     PasswordEncoder passwordEncoder() {

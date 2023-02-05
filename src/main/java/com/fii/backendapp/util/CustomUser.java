@@ -2,10 +2,11 @@ package com.fii.backendapp.util;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public class CustomUser extends User {
+public class CustomUser extends User implements UserDetails {
     private final Long uid;
     private final Boolean isProfessor;
 
