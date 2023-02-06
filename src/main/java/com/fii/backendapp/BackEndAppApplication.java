@@ -7,6 +7,7 @@ import com.fii.backendapp.service.accord.AccordService;
 import com.fii.backendapp.service.preference.PreferenceService;
 import com.fii.backendapp.service.proposal.ProposalService;
 import com.fii.backendapp.service.user.UserService;
+import com.fii.backendapp.util.PopulatingConfiguration;
 import com.fii.backendapp.util.Populator;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -29,7 +30,9 @@ public class BackEndAppApplication {
 //    CommandLineRunner run(UserService userService, ProposalService proposalService,
 //                          PreferenceService preferenceService, AccordService accordService) {
 //        return args -> {
-//            Populator populator = new Populator(userService, proposalService, preferenceService, accordService, 500, 2);
+//            PopulatingConfiguration configuration = new PopulatingConfiguration(500, 2, 3, 20, 10, 20, 1.2);
+//            Populator populator = new Populator(userService, proposalService, preferenceService, accordService,
+//                    configuration);
 //            populator.populate();
 //        };
 //    }

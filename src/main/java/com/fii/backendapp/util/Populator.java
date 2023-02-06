@@ -25,27 +25,16 @@ public class Populator {
     private PreferenceService preferenceService;
     private AccordService accordService;
     private Set<String> emails = new HashSet<>();
-    private static Integer userCount;
-    private static Integer adminCount;
-    private static Integer professorCount;
-    private static Integer maxTopicPlaces = 3;
-    private static Integer topicProb = 20;
-    private static Integer professorProb = 10;
-    private static Integer preferenceCount = 20;
-    private static Double propsToStudsRatio = 1.2;
+    private PopulatingConfiguration config;
+    private Integer professorCount;
 
     public Populator(UserService userService, ProposalService proposalService, PreferenceService preferenceService,
-                     AccordService accordService, Integer userCount, Integer adminCount) {
+                     AccordService accordService, PopulatingConfiguration config) {
         this.userService = userService;
         this.proposalService = proposalService;
         this.preferenceService = preferenceService;
         this.accordService = accordService;
-        this.userCount = userCount;
-        this.adminCount = adminCount;
-        if (this.adminCount < 1 || this.adminCount > userCount) {
-            throw new RuntimeException("Number of users with admin rights must be a positive integer lower than user " +
-                    "count.");
-        }
+        this.config = config;
     }
 
     public void populate() {
@@ -67,13 +56,13 @@ public class Populator {
         Integer adminCounter = 0;
         Integer userCounter = 0;
         User addedUser;
-        while (userCounter < userCount) {
+        while (userCounter < config.getUserCount()) {
             firstName = faker.name().firstName();
             lastName = faker.name().lastName();
             email = createUniqueEmail(firstName, lastName);
             email = email.replaceAll("[^a-zA-Z0-9.@]", "").toLowerCase();
             description = createDescription(email);
-            isProfessor = decide(professorProb);
+            isProfessor = decide(config.getProfessorProb());
             addedUser = new User(null, firstName, lastName, email, password, isProfessor, description, null,
                     new ArrayList<>(), new ArrayList<>());
             if (isProfessor) {
@@ -81,7 +70,7 @@ public class Populator {
             }
             userService.saveUser(addedUser);
             userService.addRoleToUser(email, "ROLE_USER");
-            if (adminCounter < adminCount) {
+            if (adminCounter < config.getAdminCount()) {
                 userService.addRoleToUser(email, "ROLE_ADMIN");
                 adminCounter++;
             }
@@ -90,8 +79,8 @@ public class Populator {
     }
 
     private void populateProposals() {
-        Integer studentCount = userCount - professorCount;
-        Double auxPlaceCount = Math.ceil(studentCount.doubleValue() / professorCount * propsToStudsRatio);
+        Integer studentCount = config.getUserCount() - professorCount;
+        Double auxPlaceCount = Math.ceil(studentCount.doubleValue() / professorCount * config.getPropsToStudsRatio());
         Long placeCount = auxPlaceCount.longValue();
         Long places;
         List<User> professors = userService.getProfessors();
@@ -119,8 +108,8 @@ public class Populator {
         Preference newPreference;
         for (var student : students) {
             Collections.shuffle(proposals);
-            if (preferenceCount < proposals.size()) {
-                preferredProposals = proposals.subList(0, preferenceCount);
+            if (config.getPreferenceCount() < proposals.size()) {
+                preferredProposals = proposals.subList(0, config.getPreferenceCount());
             } else {
                 preferredProposals = proposals.subList(0, proposals.size());
             }
@@ -177,19 +166,18 @@ public class Populator {
         Long places;
         String title, description, resources;
         StringBuilder builder = new StringBuilder();
-        boolean isTopic = decide(topicProb);
+        boolean isTopic = decide(config.getTopicProb());
 
         // deciding if it is topic, with multiple places, or project
         // setting title accordingly
         if (isTopic) {
-            places = new Long(randomInt(1, maxTopicPlaces));
+            places = new Long(randomInt(1, config.getMaxTopicPlaces()));
             builder.append("Topic ").append(index).append(" of ").append(professor.getUsername());
-            title = builder.toString();
         } else {
             places = null;
             builder.append("Project ").append(index).append(" of ").append(professor.getUsername());
-            title = builder.toString();
         }
+        title = builder.toString();
         // setting default description
         builder = new StringBuilder("Some generic description of ").append(title);
         description = builder.toString();
