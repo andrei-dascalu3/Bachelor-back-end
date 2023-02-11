@@ -36,7 +36,7 @@ public class AssignAlgorithm {
         for (int i = 0; i < m; i++) {
             pi[i] = round(.0);
         }
-        while (eps >= 0.0001 / nodes.doubleValue()) {
+        while (eps >= alpha / nodes.doubleValue()) {
             refine();
         }
         return solution;
