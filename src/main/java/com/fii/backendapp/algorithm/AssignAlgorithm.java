@@ -81,6 +81,7 @@ public class AssignAlgorithm {
                 if (!h.equals(i) && x.get(edge) != null && x.get(edge) == 1) {
                     x.put(edge, 0); //push
                     unassigned.add(h);
+                    break;
                 }
             }
             pi[j] = pi[k] + c.get(new Edge(i, k)) - c.get(new Edge(i, j)) + eps;
