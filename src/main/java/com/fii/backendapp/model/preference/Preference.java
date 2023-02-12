@@ -15,11 +15,11 @@ import javax.persistence.*;
 public class Preference {
     @EmbeddedId
     private PreferenceKey id = new PreferenceKey();
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("studentId")
     @JoinColumn(name = "stud_id")
     private User student;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("proposalId")
     @JoinColumn(name = "prop_id")
     private Proposal proposal;

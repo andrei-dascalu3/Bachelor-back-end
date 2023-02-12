@@ -26,18 +26,18 @@ public class BackEndAppApplication {
         SpringApplication.run(BackEndAppApplication.class, args);
     }
 
-    @Bean
-    CommandLineRunner run(UserService userService, ProposalService proposalService,
-                          PreferenceService preferenceService, AccordService accordService) {
-        return args -> {
+//    @Bean
+//    CommandLineRunner run(UserService userService, ProposalService proposalService,
+//                          PreferenceService preferenceService, AccordService accordService) {
+//        return args -> {
 //            PopulatingConfiguration configuration = new PopulatingConfiguration(500, 2, 3, 20, 10, 20, 1.2);
 //            Populator populator = new Populator(userService, proposalService, preferenceService, accordService,
 //                    configuration);
 //            populator.populate();
-            Convertor convertor = new Convertor(accordService, userService, proposalService, preferenceService);
-            testAlgo(convertor);
-        };
-    }
+//            Convertor convertor = new Convertor(accordService, userService, proposalService, preferenceService);
+//            testAlgo(convertor);
+//        };
+//    }
 
     @Bean
     PasswordEncoder passwordEncoder() {

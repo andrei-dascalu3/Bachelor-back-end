@@ -37,6 +37,6 @@ public class Proposal {
     @JoinColumn(name = "prof_id", nullable = false)
     @JsonBackReference
     private User author;
-    @OneToOne(mappedBy = "proposal")
+    @OneToOne(mappedBy = "proposal", fetch = FetchType.LAZY)
     private Accord accord;
 }

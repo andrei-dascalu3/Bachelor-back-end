@@ -16,15 +16,15 @@ public class Accord {
     @EmbeddedId
     private AccordKey id = new AccordKey();
     private boolean isAccepted;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("studentId")
     @JoinColumn(name = "stud_id")
     private User student;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("professorId")
     @JoinColumn(name = "prof_id")
     private User professor;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "prop_id", referencedColumnName = "id")
     private Proposal proposal;
 }
