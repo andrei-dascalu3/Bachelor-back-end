@@ -1,6 +1,5 @@
 package com.fii.backendapp.service.proposal;
 
-import com.fii.backendapp.dto.ProposalDto;
 import com.fii.backendapp.model.proposal.Proposal;
 
 import java.util.List;

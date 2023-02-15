@@ -6,7 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fii.backendapp.dto.UserDto;
-import com.fii.backendapp.model.proposal.Proposal;
 import com.fii.backendapp.model.user.Role;
 import com.fii.backendapp.model.user.User;
 import com.fii.backendapp.service.proposal.ProposalService;
