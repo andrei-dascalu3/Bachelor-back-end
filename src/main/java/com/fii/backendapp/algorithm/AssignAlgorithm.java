@@ -5,11 +5,13 @@ import java.math.RoundingMode;
 import java.util.*;
 
 public class AssignAlgorithm {
+    private final Integer refineLimit;
     private final Integer n, m, nodes;
     private final Double[] pi;
     private final Double alpha;
     private final Map<Edge, Integer> x;
-    private final List<Integer> unassigned;
+    private final List<Integer> unassignedStuds;
+    private final List<Integer> unassignedProps;
     private final Map<Edge, Double> c;
     private final TreeMap<Double, Integer> heap;
     private Double eps;
@@ -23,21 +25,29 @@ public class AssignAlgorithm {
         alpha = 10.0;
         pi = new Double[m + 1];
         x = new HashMap<>();
-        unassigned = new ArrayList<>();
+        unassignedStuds = new ArrayList<>();
+        unassignedProps = new ArrayList<>();
         heap = new TreeMap<>();
         solution = new HashMap<>();
+        refineLimit = n * 2;
     }
 
     public Map<Integer, Assignation> solve() {
         eps = getMaxCost();
         for (int i = 0; i < n; i++) {
-            unassigned.add(i);
+            unassignedStuds.add(i);
         }
         for (int i = 0; i < m; i++) {
             pi[i] = round(.0);
         }
         while (eps >= alpha / nodes.doubleValue()) {
             refine();
+        }
+        for(var stud : unassignedStuds) {
+            if(!unassignedProps.isEmpty()) {
+                var prop = unassignedProps.remove(0);
+                solution.put(stud, new Assignation(prop, 100.0));
+            }
         }
         return solution;
     }
@@ -47,10 +57,12 @@ public class AssignAlgorithm {
         for (var edge : c.keySet()) {
             x.put(edge, 0);
         }
-        Collections.shuffle(unassigned);
-        while (!unassigned.isEmpty()) {
-            Integer i = unassigned.remove(0);
+        Collections.shuffle(unassignedStuds);
+        Integer counter = 0;
+        while (!unassignedStuds.isEmpty() && counter < refineLimit) {
+            Integer i = unassignedStuds.remove(0);
             doublePushHeap(i);
+            counter++;
         }
     }
 
@@ -61,17 +73,19 @@ public class AssignAlgorithm {
         if (j != null && k != null) {
             x.put(new Edge(i, j), 1); // push
             solution.put(i, new Assignation(j, c.get(new Edge(i, j))));
-            unassigned.remove(new Integer(i));
+            unassignedStuds.remove(new Integer(i));
+            unassignedProps.remove(new Integer(j));
             if (!heap.containsValue(j)) {
                 heap.put(pi[j], j);
                 if (heap.size() > n) {
                     Integer g = heap.pollFirstEntry().getValue();
                     for (Integer f = 0; f < n; ++f) {
                         edge = new Edge(f, g);
-                        if (x.containsKey(edge)) {
+                        if (x.containsKey(edge) && x.get(edge) == 1) {
                             x.put(edge, 0); // push
                             solution.put(i, null);
-                            unassigned.add(f);
+                            unassignedStuds.add(f);
+                            unassignedProps.add(g);
                         }
                     }
                 }
@@ -80,7 +94,8 @@ public class AssignAlgorithm {
                 edge = new Edge(h, j);
                 if (!h.equals(i) && x.get(edge) != null && x.get(edge) == 1) {
                     x.put(edge, 0); //push
-                    unassigned.add(h);
+                    unassignedStuds.add(h);
+                    unassignedProps.add(j);
                     break;
                 }
             }
@@ -95,10 +110,15 @@ public class AssignAlgorithm {
         for (int j = 0; j < m; ++j) {
             reducedCost = getReducedCost(i, j);
             if (reducedCost != null) {
-                if (firstMin == null || reducedCost < firstMin){
+                if (firstMin == null) {
                     firstMin = reducedCost;
                     result[0] = j;
-                } else if (secondMin == null || reducedCost < secondMin){
+                } else if (reducedCost < firstMin) {
+                    secondMin = firstMin;
+                    result[1] = result[0];
+                    firstMin = reducedCost;
+                    result[0] = j;
+                } else if (secondMin == null || reducedCost < secondMin) {
                     secondMin = reducedCost;
                     result[1] = j;
                 }
@@ -110,7 +130,7 @@ public class AssignAlgorithm {
     private Double getReducedCost(Integer i, Integer j) {
         Edge edge = new Edge(i, j);
         if (c.containsKey(edge)) {
-            return c.get(edge) + pi[j];
+            return c.get(edge) - pi[i] + pi[j];
         }
         return null;
     }

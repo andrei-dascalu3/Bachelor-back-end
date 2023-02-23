@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fii.backendapp.dto.UserDto;
+import com.fii.backendapp.dto.UserProfileDto;
 import com.fii.backendapp.model.user.Role;
 import com.fii.backendapp.model.user.User;
 import com.fii.backendapp.service.proposal.ProposalService;
@@ -62,6 +63,14 @@ public class UserController {
         User user = userService.getUser(userId);
         UserDto userDto = convertToDto(user);
         return ResponseEntity.ok().body(userDto);
+    }
+
+    @GetMapping("/users/{id}/description")
+    public ResponseEntity<UserProfileDto> getUserDescription(@PathVariable("id") Long userId) {
+        User user = userService.getUser(userId);
+        UserProfileDto response = new UserProfileDto();
+        response.setDescription(user.getDescription());
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping("/user/save")
