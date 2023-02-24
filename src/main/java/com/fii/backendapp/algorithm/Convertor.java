@@ -49,10 +49,12 @@ public class Convertor {
                     cost += 1.0;
                 }
                 indices = propIndices.get(propId);
-                for (var j : indices) {
-                    c.put(new Edge(i, j), cost);
+                if(indices != null) {
+                    for (var j : indices) {
+                        c.put(new Edge(i, j), cost);
+                    }
+                    prevRating = pref.getRating();
                 }
-                prevRating = pref.getRating();
             }
         }
     }
