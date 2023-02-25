@@ -130,7 +130,7 @@ public class AssignAlgorithm {
     private Double getReducedCost(Integer i, Integer j) {
         Edge edge = new Edge(i, j);
         if (c.containsKey(edge)) {
-            return c.get(edge) - pi[i] + pi[j];
+            return c.get(edge) + pi[j];
         }
         return null;
     }
