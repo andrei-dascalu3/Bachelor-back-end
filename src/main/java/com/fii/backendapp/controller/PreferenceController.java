@@ -49,7 +49,7 @@ public class PreferenceController {
                                                         @PathVariable Long id, Authentication authentication) {
         String username = (String) authentication.getPrincipal();
         Long uid = userService.getUser(username).getId();
-        if (uid == id) {
+        if (uid.equals(id)) {
             URI uri = URI.create(
                     ServletUriComponentsBuilder
                             .fromCurrentContextPath()
@@ -71,7 +71,7 @@ public class PreferenceController {
                                                                 Authentication authentication) {
         String username = (String) authentication.getPrincipal();
         Long uid = userService.getUser(username).getId();
-        if (uid == id) {
+        if (uid.equals(id)) {
             PreferenceKey key = new PreferenceKey(id, propId);
             Preference preference = preferenceService.getPreference(key);
             preference.setRating(preferenceDto.getRating());
@@ -87,9 +87,9 @@ public class PreferenceController {
                                                           Authentication authentication) {
         String username = (String) authentication.getPrincipal();
         Long uid = userService.getUser(username).getId();
-        if (uid == id) {
+        if (uid.equals(id)) {
             PreferenceKey key = new PreferenceKey(id, propId);
-            Preference preference = preferenceService.getPreference(key);
+            preferenceService.getPreference(key);
             preferenceService.deletePreference(key);
             return new ResponseEntity<>(key, HttpStatus.NO_CONTENT);
         }

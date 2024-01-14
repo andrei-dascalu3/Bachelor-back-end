@@ -40,7 +40,8 @@ public class AccordServiceImpl implements AccordService {
 
     @Override
     public Accord getAccord(AccordKey id) {
-        return accordRepo.findById(id).get();
+        var accord = accordRepo.findById(id);
+        return accord.orElse(null);
     }
 
     @Override

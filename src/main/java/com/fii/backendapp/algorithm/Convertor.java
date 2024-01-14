@@ -24,7 +24,8 @@ public class Convertor {
     private final UserService userService;
     private final ProposalService proposalService;
     private final PreferenceService preferenceService;
-    private List<Long> studIds, propIds;
+    private List<Long> studIds;
+    private List<Long> propIds;
     private Map<Long, Long> accordIds = new HashMap<>();
     private Map<Long, Integer> studIndices = new HashMap<>();
     private Map<Long, List<Integer>> propIndices = new HashMap<>();
@@ -36,13 +37,16 @@ public class Convertor {
         // converting preferences into map entries
         List<Preference> prefs;
         List<Integer> indices;
-        Long prevRating, propId;
-        Double cost;
+        Long prevRating;
+        Long propId;
+        double cost;
+
         for (var studId : studIds) {
             Integer i = studIndices.get(studId);
             prefs = preferenceService.getUserPreferences(studId);
             cost = 0.0;
             prevRating = 0L;
+
             for (var pref : prefs) {
                 propId = pref.getProposal().getId();
                 if (prevRating == 0 || prevRating > pref.getRating()) {
@@ -64,7 +68,9 @@ public class Convertor {
         List<Accord> accords = accordService.getAllAcceptedAccords();
         List<Long> assignedStudIds = new ArrayList<>();
         List<Long> assignedPropIds = new ArrayList<>();
-        Long assignedStudId, assignedPropId;
+        Long assignedStudId;
+        Long assignedPropId;
+
         for (var accord : accords) {
             assignedStudId = accord.getStudent().getId();
             assignedPropId = accord.getProposal().getId();
@@ -72,6 +78,7 @@ public class Convertor {
             assignedStudIds.add(assignedStudId);
             assignedPropIds.add(assignedPropId);
         }
+
         // fetching student ids
         studIds = userService.getStudents().stream().map(User::getId).collect(Collectors.toList());
         // fetching proposals

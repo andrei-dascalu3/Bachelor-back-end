@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fii.backendapp.util.CustomUser;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,9 +26,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-    private final static String SECRET = "20b5abe39a95bd4d69a1e6999514c56690c50da23b04850e1c8b79a25352caea";
-    private final static Integer EXP_TIME = 2 * 60 * 60 * 1000;
-    private final static Integer REFRESH_EXP_TIME = 24 * 60 * 60 * 1000;
+    @Value("${secret}")
+    private static String secret;
+    private static final Integer EXP_TIME = 2 * 60 * 60 * 1000;
+    private static final Integer REFRESH_EXP_TIME = 24 * 60 * 60 * 1000;
 
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -49,7 +51,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         // This is UserDetails User class
         CustomUser user = (CustomUser) authentication.getPrincipal();
         // Key is to be properly obtained in the future
-        Algorithm algorithm = Algorithm.HMAC256(SECRET.getBytes());
+        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         // calculating ms until expiration of token
         Date now = new Date(System.currentTimeMillis());
         Date expirationDate = new Date(System.currentTimeMillis() + EXP_TIME);

@@ -3,7 +3,6 @@ package com.fii.backendapp.model.proposal;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fii.backendapp.dto.ProposalDto;
 import com.fii.backendapp.model.user.User;
 import com.fii.backendapp.model.accord.Accord;
 import lombok.AllArgsConstructor;

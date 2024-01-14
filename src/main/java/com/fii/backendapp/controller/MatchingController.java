@@ -58,14 +58,16 @@ public class MatchingController {
     private List<MatchingDto> convertSolutionToResponse(Map<Integer, Assignation> solution, List<Long> studIds,
                                                         List<Long> propIds, Map<Long, Long> accordIds) {
         List<MatchingDto> response = new ArrayList<>();
-        Long studentId, proposalId;
+        Long studentId;
+        Long proposalId;
         Assignation assignation;
         Double cost;
+
         // accords
         if(!accordIds.isEmpty()) {
-            for (var i : accordIds.keySet()) {
-                studentId = i;
-                proposalId = accordIds.get(i);
+            for (var entry : accordIds.entrySet()) {
+                studentId = entry.getKey();
+                proposalId = entry.getValue();
                 cost = 0.0;
                 response.add(convertSolutionToDto(studentId, proposalId, cost));
             }
@@ -86,27 +88,24 @@ public class MatchingController {
         Proposal proposal = proposalService.getProposal(proposalId);
         MatchingStudentDto matchingStudentDto = convertStudentToMatchingStudentDto(student);
         MatchingProposalDto matchingProposalDto = convertProposalToMatchingProposalDto(proposal);
-        MatchingDto matchingDto = new MatchingDto(matchingStudentDto, matchingProposalDto, cost);
-        return matchingDto;
+        return new MatchingDto(matchingStudentDto, matchingProposalDto, cost);
     }
 
     private MatchingStudentDto convertStudentToMatchingStudentDto(User student) {
-        MatchingStudentDto matchingStudentDto = new MatchingStudentDto(
+        return new MatchingStudentDto(
                 student.getId(),
                 student.getFirstName(),
                 student.getLastName(),
                 student.getUsername());
-        return matchingStudentDto;
     }
 
     private MatchingProposalDto convertProposalToMatchingProposalDto(Proposal proposal) {
-        MatchingProposalDto matchingProposalDto = new MatchingProposalDto(
+        return new MatchingProposalDto(
                 proposal.getId(),
                 proposal.getTitle(),
                 proposal.getDescription(),
                 proposal.getResources(),
                 proposal.getAuthor().getUsername()
         );
-        return matchingProposalDto;
     }
 }

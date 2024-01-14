@@ -30,7 +30,8 @@ public class PreferenceServiceImpl implements PreferenceService {
 
     @Override
     public Preference getPreference(PreferenceKey key) {
-        return preferenceRepo.findById(key).get();
+        var preference = preferenceRepo.findById(key);
+        return preference.orElse(null);
     }
 
     @Override

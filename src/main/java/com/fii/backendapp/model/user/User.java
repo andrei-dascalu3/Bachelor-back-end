@@ -2,7 +2,6 @@ package com.fii.backendapp.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fii.backendapp.model.proposal.Proposal;
 import lombok.AllArgsConstructor;

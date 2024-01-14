@@ -14,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,8 +37,8 @@ public class ProposalController {
     @GetMapping("/users/{id}/proposals")
     public ResponseEntity<List<ProposalDto>> getUserProposals(@PathVariable Long id,
                                                               @RequestParam("available") Optional<Boolean> available) {
-        List<Proposal> proposals = new ArrayList<>();
-        if (available.isPresent() && available.get()) {
+        List<Proposal> proposals;
+        if (available.orElse(false)) {
             proposals = proposalService.getAvailableUserProposals(id);
         } else {
             proposals = proposalService.getUserProposals(id);
@@ -53,7 +52,7 @@ public class ProposalController {
                                                     Authentication authentication) {
         String username = (String) authentication.getPrincipal();
         Long uid = userService.getUser(username).getId();
-        if (uid == id) {
+        if (uid.equals(id)) {
             URI uri = URI.create(
                     ServletUriComponentsBuilder
                             .fromCurrentContextPath()
@@ -73,7 +72,7 @@ public class ProposalController {
                                                       @PathVariable Long propId, Authentication authentication) {
         String username = (String) authentication.getPrincipal();
         Long uid = userService.getUser(username).getId();
-        if (uid == id) {
+        if (uid.equals(id)) {
             Proposal proposal = proposalService.getProposal(propId);
             proposal.setTitle(proposalDto.getTitle());
             proposal.setDescription(proposalDto.getDescription());
@@ -90,9 +89,9 @@ public class ProposalController {
                                                Authentication authentication) {
         String username = (String) authentication.getPrincipal();
         Long uid = userService.getUser(username).getId();
-        if (uid == id) {
+        if (uid.equals(id)) {
             Proposal proposal = proposalService.getProposal(propId);
-            if (id != proposal.getAuthor().getId()) {
+            if (!id.equals(proposal.getAuthor().getId())) {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
             proposalService.deleteProposal(propId);

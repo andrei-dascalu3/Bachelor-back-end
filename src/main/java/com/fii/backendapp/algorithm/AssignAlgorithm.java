@@ -6,7 +6,9 @@ import java.util.*;
 
 public class AssignAlgorithm {
     private final Integer refineLimit;
-    private final Integer n, m, nodes;
+    private final Integer n;
+    private final Integer m;
+    private final Integer nodes;
     private final Double[] pi;
     private final Double alpha;
     private final Map<Edge, Integer> x;
@@ -58,7 +60,7 @@ public class AssignAlgorithm {
             x.put(edge, 0);
         }
         Collections.shuffle(unassignedStuds);
-        Integer counter = 0;
+        int counter = 0;
         while (!unassignedStuds.isEmpty() && counter < refineLimit) {
             Integer i = unassignedStuds.remove(0);
             doublePushHeap(i);
@@ -69,12 +71,14 @@ public class AssignAlgorithm {
     private void doublePushHeap(Integer i) {
         Edge edge;
         Integer[] result = getEndsWithMinReducedCost(i);
-        Integer j = result[0], k = result[1];
+        Integer j = result[0];
+        Integer k = result[1];
+
         if (j != null && k != null) {
             x.put(new Edge(i, j), 1); // push
             solution.put(i, new Assignation(j, c.get(new Edge(i, j))));
-            unassignedStuds.remove(new Integer(i));
-            unassignedProps.remove(new Integer(j));
+            unassignedStuds.remove(i);
+            unassignedProps.remove(j);
             if (!heap.containsValue(j)) {
                 heap.put(pi[j], j);
                 if (heap.size() > n) {
@@ -105,8 +109,11 @@ public class AssignAlgorithm {
     }
 
     private Integer[] getEndsWithMinReducedCost(Integer i) {
-        Double firstMin = null, secondMin = null, reducedCost;
+        Double firstMin = null;
+        Double secondMin = null;
+        Double reducedCost;
         Integer[] result = {null, null};
+
         for (int j = 0; j < m; ++j) {
             reducedCost = getReducedCost(i, j);
             if (reducedCost != null) {
@@ -137,9 +144,10 @@ public class AssignAlgorithm {
 
     private Double getMaxCost() {
         Double max = null;
-        for (var edge : c.keySet()) {
-            Double value = c.get(edge);
-            if (max == null || max < c.get(edge)) {
+
+        for (var entry : c.entrySet()) {
+            Double value = entry.getValue();
+            if (max == null || max < entry.getValue()) {
                 max = value;
             }
         }

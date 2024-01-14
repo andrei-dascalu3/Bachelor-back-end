@@ -10,6 +10,8 @@ import com.fii.backendapp.service.proposal.ProposalService;
 import com.fii.backendapp.service.user.UserService;
 import com.fii.backendapp.util.PopulatingConfiguration;
 import com.fii.backendapp.util.Populator;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,35 +24,41 @@ import java.util.List;
 import java.util.Map;
 
 @SpringBootApplication
+@Slf4j
 public class BackEndAppApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(BackEndAppApplication.class, args);
     }
 
-//    @Bean
-//    CommandLineRunner run(UserService userService, ProposalService proposalService,
-//                          PreferenceService preferenceService, AccordService accordService) {
-//        return args -> {
-//            PopulatingConfiguration configuration = new PopulatingConfiguration(500, 2, 3, 20, 10, 20, 1.2);
-//            Populator populator = new Populator(userService, proposalService, preferenceService, accordService,
-//                    configuration);
-//            populator.populate();
-//            Convertor convertor = new Convertor(accordService, userService, proposalService, preferenceService);
-//            testAlgo(convertor);
-//        };
-//    }
+    @Bean
+    CommandLineRunner run(UserService userService, ProposalService proposalService,
+                          PreferenceService preferenceService, AccordService accordService) {
+        return args -> {
+            PopulatingConfiguration configuration = new PopulatingConfiguration(500, 2, 3, 20, 10, 20, 1.2);
+            Populator populator = new Populator(userService, proposalService, preferenceService, accordService,
+                    configuration);
+            populator.populate();
+            Convertor convertor = new Convertor(accordService, userService, proposalService, preferenceService);
+            testAlgo(convertor);
+        };
+    }
 
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
+
     private void printSolution(Map<Integer, Assignation> solution, List<Long> studIds, List<Long> propIds) {
-        System.out.println(solution);
-        for (var i : solution.keySet()) {
-            var assignation = solution.get(i);
-            System.out.println(studIds.get(i) + " -> " + propIds.get(assignation.getEnd()) + " with cost = " + assignation.getCost());
+        log.info(solution.toString());
+        for (var entry : solution.entrySet()) {
+            var assignation = entry.getValue();
+            log.info(studIds.get(entry.getKey()) + " -> " + propIds.get(assignation.getEnd()) + " with cost = " + assignation.getCost());
         }
     }
 

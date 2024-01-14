@@ -62,14 +62,14 @@ public class AccordController {
                                                 Authentication authentication) {
         String username = (String) authentication.getPrincipal();
         Long uid = userService.getUser(username).getId();
-        if (uid == id) {
+        if (uid.equals(id)) {
             URI uri = URI.create(
                     ServletUriComponentsBuilder
                             .fromCurrentContextPath()
                             .path("/api/professors/{id}/accords/save")
                             .toUriString()
             );
-            Accord accord = convertToEntity(accordDto, id);
+            Accord accord = convertToEntity(accordDto);
             accord.setAccepted(false);
             Accord accordSaved = accordService.saveAccord(accord);
             return ResponseEntity.created(uri).body(convertToDto(accordSaved));
@@ -83,7 +83,7 @@ public class AccordController {
                                                         @PathVariable Long profId, Authentication authentication) {
         String username = (String) authentication.getPrincipal();
         Long uid = userService.getUser(username).getId();
-        if (uid == id) {
+        if (uid.equals(id)) {
             AccordKey key = new AccordKey(id, profId);
             Accord accord = accordService.getAccord(key);
             accord.setAccepted(accordDto.isAccepted());
@@ -99,9 +99,9 @@ public class AccordController {
                                                   Authentication authentication) {
         String username = (String) authentication.getPrincipal();
         Long uid = userService.getUser(username).getId();
-        if (uid == id) {
+        if (uid.equals(id)) {
             AccordKey key = new AccordKey(id, profId);
-            Accord accord = accordService.getAccord(key);
+            accordService.getAccord(key);
             accordService.deleteAccord(key);
             return new ResponseEntity<>(key, HttpStatus.NO_CONTENT);
         }
@@ -110,7 +110,7 @@ public class AccordController {
         }
     }
 
-    private Accord convertToEntity(AccordDto accordDto, Long id) {
+    private Accord convertToEntity(AccordDto accordDto) {
         Accord accord = new Accord();
         User professor = userService.getUser(accordDto.getProfId());
         accord.setProfessor(professor);

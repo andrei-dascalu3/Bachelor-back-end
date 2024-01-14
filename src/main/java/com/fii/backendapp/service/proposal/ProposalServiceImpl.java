@@ -27,7 +27,8 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     public Proposal getProposal(Long id) {
-        return proposalRepo.findById(id).get();
+        var proposal = proposalRepo.findById(id);
+        return proposal.orElse(null);
     }
 
     @Override
@@ -44,7 +45,9 @@ public class ProposalServiceImpl implements ProposalService {
     public List<Proposal> getAvailableUserProposals(Long id) {
         List<Proposal> proposals = proposalRepo.findByAuthor_Id(id);
         List<Proposal> result = new ArrayList<>();
-        Long totalPlaces, busyPlaces;
+        long totalPlaces;
+        long busyPlaces;
+
         for (var proposal : proposals) {
             totalPlaces = proposal.getPlaces() != null ? proposal.getPlaces() : 1;
             busyPlaces = accordRepo.countByProposal_Id(proposal.getId());

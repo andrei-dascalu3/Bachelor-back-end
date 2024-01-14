@@ -43,14 +43,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepo.findByUsername(username);
+
         if (user == null) {
             log.error("User not found in the database");
             throw new UsernameNotFoundException("User not found in the database");
         }
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        user.getRoles().forEach(role -> {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-        });
+        user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
+
         return new CustomUser(user.getUsername(), user.getPassword(), authorities, user.getId(), user.isProfessor());
     }
 
@@ -78,7 +78,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     public User getUser(Long id) {
-        return userRepo.findById(id).get();
+        var user = userRepo.findById(id);
+        return user.orElse(null);
     }
 
     @Override
